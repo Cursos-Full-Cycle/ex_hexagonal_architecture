@@ -1,0 +1,1 @@
+# ex_hexagonal_architecture
