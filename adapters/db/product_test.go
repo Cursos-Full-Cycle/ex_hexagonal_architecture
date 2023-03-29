@@ -6,6 +6,7 @@ import (
 	"testing"
 	"github.com/stretchr/testify/require"
 	"go_hexagonal/adapters/db"
+	"go_hexagonal/application"
 )
 
 var Db *sql.DB
@@ -49,4 +50,27 @@ func createTable(db *sql.DB) {
 		require.Equal(t, "Product Test", product.GetName())
 		require.Equal(t, 0.0, product.GetPrice())
 		require.Equal(t, "disabled", product.GetStatus())
+	}
+	
+	func TestProducDb_Save(t *testing.T) {
+		setUp()
+		defer Db.Close()
+		producDb := db.NewProductDb(Db)
+		
+		product := application.NewProduct()
+		product.Name = "Product Test"
+		product.Price = 25
+		
+		productResult,err := producDb.Save(product)
+		require.Nil(t, err)
+		require.Equal(t, product.Name, productResult.GetName())
+		require.Equal(t, product.Price, productResult.GetPrice())
+		require.Equal(t, product.Status, productResult.GetStatus())
+		
+		product.Status = "enabled"
+		productResult,err = producDb.Save(product)
+		require.Nil(t, err)
+		require.Equal(t, product.Name, productResult.GetName())
+		require.Equal(t, product.Price, productResult.GetPrice())
+		require.Equal(t, product.Status, productResult.GetStatus())
 	}

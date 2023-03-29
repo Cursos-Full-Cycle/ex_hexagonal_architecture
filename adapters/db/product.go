@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"go_hexagonal/application"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 )
 
 type ProductDb struct {
@@ -15,7 +16,7 @@ func NewProductDb(db *sql.DB) *ProductDb {
 }
 
 func (p *ProductDb) Get(id string) (application.ProductInterface, error) {
-	var product application.Product
+	var product application.Product	
 	stmt, err := p.db.Prepare("SELECT id, name, price, status FROM products WHERE id = ?")
 	if err != nil {
 		return nil, err
@@ -29,7 +30,10 @@ func (p *ProductDb) Get(id string) (application.ProductInterface, error) {
 
 func (p *ProductDb) Save(product application.ProductInterface) (application.ProductInterface, error) {
 	var rows int
-	p.db.QueryRow("SELECT id FROM products WHERE id = ?", product.GetId()).Scan(&rows)
+	log.Print(product.GetId())
+	var sql := "SELECT id, name, price, status FROM products WHERE id = ?"
+	p.db.QueryRow(`SELECT count(*) FROM products WHERE id = "?"`, product.GetId()).Scan(&rows)
+	log.Print(rows)
 	if rows == 0 {
 		_, err := p.create(product)
 		if err != nil {

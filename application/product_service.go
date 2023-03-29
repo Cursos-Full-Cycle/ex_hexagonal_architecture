@@ -1,7 +1,13 @@
 package application
 
+import "log"
+
 type ProductService struct {
 	Persistence ProductPersistenceInterface
+}
+
+func NewProductService(persistence ProductPersistenceInterface) *ProductService {
+	return &ProductService{Persistence: persistence}
 }
 
 func (s *ProductService) Get(id string) (ProductInterface, error) {
@@ -35,7 +41,7 @@ func (s *ProductService) Enable(product ProductInterface) (ProductInterface, err
 	if err != nil {
 		return &Product{}, err
 	}
-	
+	log.Print(product.GetId())
 	result, err := s.Persistence.Save(product)
 	if err != nil {
 		return nil, err
