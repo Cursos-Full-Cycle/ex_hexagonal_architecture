@@ -1,7 +1,5 @@
 package application
 
-import "log"
-
 type ProductService struct {
 	Persistence ProductPersistenceInterface
 }
@@ -40,26 +38,25 @@ func (s *ProductService) Enable(product ProductInterface) (ProductInterface, err
 	err := product.Enable()	
 	if err != nil {
 		return &Product{}, err
-	}
-	log.Print(product.GetId())
-	result, err := s.Persistence.Save(product)
-	if err != nil {
-		return nil, err
-	}
-	
-	return result, nil
-}
-
-func (s *ProductService) Disable(product ProductInterface) (ProductInterface, error) {
-	err := product.Disable()	
-	if err != nil {
-		return &Product{}, err
+		}	
+		result, err := s.Persistence.Save(product)
+		if err != nil {
+			return nil, err
+		}
+		
+		return result, nil
 	}
 	
-	result, err := s.Persistence.Save(product)
-	if err != nil {
-		return nil, err
+	func (s *ProductService) Disable(product ProductInterface) (ProductInterface, error) {
+		err := product.Disable()	
+		if err != nil {
+			return &Product{}, err
+		}
+		
+		result, err := s.Persistence.Save(product)
+		if err != nil {
+			return nil, err
+		}
+		
+		return result, nil
 	}
-	
-	return result, nil
-}
